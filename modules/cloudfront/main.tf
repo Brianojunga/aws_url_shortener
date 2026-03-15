@@ -4,8 +4,9 @@ resource "aws_cloudfront_distribution" "api_distribution" {
     comment = "CloudFront distribution for API Gateway"
 
     origin {
-        domain_name = var.api_agw_invoke_url
+        domain_name =  split("/", replace(var.api_agw_invoke_url, "https://", ""))[0]
         origin_id = "api-gateway-origin"
+        origin_path = "/prod"
 
         custom_origin_config {
           http_port = 80
@@ -19,10 +20,13 @@ resource "aws_cloudfront_distribution" "api_distribution" {
       viewer_protocol_policy = "redirect-to-https"
 
       allowed_methods = [
+        "DELETE",
         "GET",
-        "POST",
+        "HEAD",
         "OPTIONS",
-        "HEAD"
+        "PATCH",
+        "POST",
+        "PUT"
       ]
 
       cached_methods = [
