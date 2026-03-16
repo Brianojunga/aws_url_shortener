@@ -30,7 +30,8 @@ def lambda_handler(event, context):
             'body': json.dumps({'short_code': short_code})
         }
     elif http_method == 'GET':
-        short_code = event['queryStringParameters'].get('short_code')
+        path_params = event.get('pathParameters') or {}
+        short_code = path_params.get('shortCode')
         response = table.get_item(
             Key = {
                 'short_code': short_code
