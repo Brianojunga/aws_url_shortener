@@ -46,14 +46,14 @@ terraform apply
 
 > After a successful run, Terraform will output a CloudFront domain like:
 > 
-> `https://<cloudfront-id>.cloudfront.net/prod`
+> `https://<cloudfront-id>.cloudfront.net`
 
 ## 🔍 Using the API
 
 ### Create a short URL
 
 ```bash
-curl -X POST "https://<cloudfront-domain>/prod/shorten" \
+curl -X POST "https://<cloudfront-domain>/shorten" \
   -H "Content-Type: application/json" \
   -d '{"original_url": "https://example.com"}'
 ```
@@ -67,7 +67,7 @@ Response:
 ### Redirect via short code
 
 ```bash
-curl -v "https://<cloudfront-domain>/prod/Ab12Cd"
+curl -v "https://<cloudfront-domain>/Ab12Cd"
 ```
 
 The service responds with a `301` redirect to the original long URL.
@@ -76,7 +76,7 @@ The service responds with a `301` redirect to the original long URL.
 
 Currently, this project is designed to deploy on AWS. The Lambda handler is a simple Python function and can be invoked locally with a test event (e.g., using AWS SAM or unit test harness) if desired.
 
-## 📌 Notes / Improvements
+## 📌 Notes
 
 - The short code generator uses a simple `random.choice`. Collisions are possible and are not currently guarded against.
 - There is no authentication or rate limiting beyond the API Gateway usage plan.
