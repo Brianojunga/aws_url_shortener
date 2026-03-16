@@ -4,15 +4,20 @@ A simple URL shortening service built on AWS using Terraform for infrastructure 
 
 ## 🚀 What this project includes
 
+- **Github Actions** this provisions and destroys the AWS resources through CI/CD
 - **AWS Lambda** (`service/handler.py`) to generate short codes and store mappings in DynamoDB
 - **DynamoDB table** (`URLShortener`) to persist short code → long URL mappings
 - **API Gateway** to expose a REST API (`POST /shorten`, `GET /{shortCode}`)
 - **CloudFront distribution** in front of API Gateway for a stable public URL
 - **Terraform modules** under `modules/` for clean separation of concerns
 
+
 ## 📁 Repository structure
 
 ```
+.github/workflow/
+  provision.yml  # Provisioning resources through CI/CD
+  destroy.yml # Destroying provisioned resources with CI/CD (Github Actions)
 modules/
   api_gateway/   # API Gateway + CORS + usage plan
   cloudfront/    # CloudFront distribution in front of API Gateway
