@@ -6,6 +6,7 @@ module "lambda" {
     source = "../modules/lambda"
     lambda_source_path = "../service"
     dynamodb_arn = module.dynamodb.table_arn
+    api_gateway_execution_arn = module.api_gateway.api_gateway_execution_arn
 }
 
 module "api_gateway" {

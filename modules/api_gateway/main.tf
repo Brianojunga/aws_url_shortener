@@ -127,6 +127,25 @@ resource "aws_api_gateway_deployment" "prod" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "api_gw_logs" {
+  name              = "/aws/api-gateway/${aws_api_gateway_rest_api.url_shortener_api.name}"
+  retention_in_days = 14
+}
+
+resource "aws_api_gateway_method_settings" "all" {
+  rest_api_id = aws_api_gateway_rest_api.url_shortener_api.id
+  stage_name  = aws_api_gateway_stage.prod.stage_name
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled    = true
+    logging_level      = "INFO"
+    data_trace_enabled = true
+  }
+
+  depends_on = [aws_api_gateway_account.account]
+}
+
 #Create 'prod' stage
 resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.prod.id
@@ -135,7 +154,27 @@ resource "aws_api_gateway_stage" "prod" {
   
   # Enable X-Ray tracing
   xray_tracing_enabled = true
-}
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gw_logs.arn
+    format          = jsonencode({
+      requestId       = "$context.requestId"
+      ip              = "$context.identity.sourceIp"
+      caller          = "$context.identity.caller"
+      user            = "$context.identity.user"
+      requestTime     = "$context.requestTime"
+      httpMethod      = "$context.httpMethod"
+      resourcePath    = "$context.resourcePath"
+      status          = "$context.status"
+      protocol        = "$context.protocol"
+      responseLength  = "$context.responseLength"
+    })
+    }
+
+    depends_on = [ 
+      aws_api_gateway_account.account,  
+      aws_iam_role_policy_attachment.api_gateway_cloudwatch_logs
+    ]
+  }
 
 # Set API Gateway account settings to allow CloudWatch logging
 resource "aws_iam_role" "api_gateway_cloudwatch_role" {

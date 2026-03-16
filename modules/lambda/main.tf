@@ -103,3 +103,11 @@ resource "aws_iam_role_policy" "lambda_xray" {
     ]
   })
 }
+
+resource "aws_lambda_permission" "api_gw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.url_shortener.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = var.api_gateway_execution_arn
+}
