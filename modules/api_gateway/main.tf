@@ -128,7 +128,7 @@ resource "aws_api_gateway_deployment" "prod" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gw_logs" {
-  name              = "/aws/api-gateway/${aws_api_gateway_rest_api.url_shortener_api.name}"
+  name              = "/aws/api-gateway/${replace(aws_api_gateway_rest_api.url_shortener_api.name, " ", "_")}"
   retention_in_days = 14
 }
 
