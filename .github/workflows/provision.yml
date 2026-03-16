@@ -7,6 +7,7 @@ on:
     paths:
         - terraform/**
         - modules/**
+        - service/**
   workflow_dispatch:
 
 jobs:

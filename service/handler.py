@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         table.put_item( 
             Item = {
                 'short_code': short_code, 
-                'long_url': original_url  
+                'long_url': f"https://{original_url}"
             }
         )
 
