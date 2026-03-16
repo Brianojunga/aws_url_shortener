@@ -32,19 +32,29 @@ def lambda_handler(event, context):
     elif http_method == 'GET':
         path_params = event.get('pathParameters') or {}
         short_code = path_params.get('shortCode')
+        
+        if not short_code:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps({'message': 'Missing short code'})
+            }
+        
         response = table.get_item(
             Key = {
                 'short_code': short_code
             }
         )
-        
-        if "item" in response:
-            long_url = response['item']['long_url']
+
+        if "Item" in response:
+            long_url = response['Item']['long_url']
             return {
                 'statusCode': 301,
                 'headers': {
-                    "location": long_url
-                }
+                    "location": long_url,
+                    "Content-Type": "application/json"
+                },
+                'body' : json.dumps({'message' : f"Redirecting to {long_url}"})
             }
     else:
         return {
